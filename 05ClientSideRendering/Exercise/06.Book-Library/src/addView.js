@@ -21,9 +21,12 @@ export function loadAddForm() {
 async function onSubmit(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
-    e.target.reset();
     const title = formData.get('title');
     const author = formData.get('author');
+    if(title==='' || author==='')return
+
+    e.target.reset();
+
     const data = await request.post('/jsonstore/collections/books',
         {title, author});
     const temp = document.createDocumentFragment();
