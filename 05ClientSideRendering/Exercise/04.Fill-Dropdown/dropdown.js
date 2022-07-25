@@ -3,7 +3,7 @@ import {repeat} from '../../../node_modules/lit-html/directives/repeat.js';
 
 
 const containerSelect = document.getElementById('menu');
-const optionTemplate = (data) => html`<option value="${data.text}">${data.text}</option>`;
+const optionTemplate = (data) => html`<option value="${data._id}">${data.text}</option>`;
 const optionsTemplate = (data) => html`${repeat(data, d => d._id, optionTemplate)}`;
 
 
