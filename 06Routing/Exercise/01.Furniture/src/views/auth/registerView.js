@@ -1,0 +1,50 @@
+const registerTemplate = (ctx, onSubmit) => ctx.html`
+<div class="row space-top">
+            <div class="col-md-12">
+                <h1>Register New User</h1>
+                <p>Please fill all fields.</p>
+            </div>
+        </div>
+        <form @submit=${onSubmit}>
+            <div class="row space-top">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-control-label" for="email">Email</label>
+                        <input class="form-control" id="email" type="text" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="password">Password</label>
+                        <input class="form-control" id="password" type="password" name="password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label" for="rePass">Repeat</label>
+                        <input class="form-control" id="rePass" type="password" name="rePass">
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="Register" />
+                </div>
+            </div>
+        </form>
+`;
+
+export function registerView(ctx) {
+    const template = registerTemplate(ctx, onSubmit.bind(null, ctx));
+    ctx.render(template, ctx.main);
+}
+
+async function onSubmit(ctx, event) {
+    event.preventDefault();
+    const formData = ctx.utils.getFormData(event.target);
+
+    const result = ctx.validators.validateForm(event.target,
+        {
+            email: [ctx.validators.checkEmailMinLength],
+            password: [ctx.validators.checkPasswordMinLength,
+                ctx.validators.checkPasswordMatch.bind(null, formData.rePass)],
+        });
+
+    if (result.errorsNumber > 0) return;
+
+    const userData = await ctx.request('register', formData);
+    ctx.utils.setUserData(sessionStorage, userData);
+    ctx.redirect('/');
+}
